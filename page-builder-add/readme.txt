@@ -2,22 +2,47 @@
 Contributors: pluginops
 Tags: landing page builder, coming soon page, maintenance mode page, lead page, page builder
 Requires at least: 4.4
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.0
 Donate link : https://pluginops.com/page-builder/
-Stable tag: 1.5.2.3
+Stable tag: 1.5.2.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Landing Page Builder By PluginOps is a powerful page builder with 120+ templates to build highly converting landing pages for free.
+Easily create high-converting, responsive landing pages with 120+ templates using the free PluginOps Page Builder for WordPress.
+
 
 == Description ==
 
+**Build Stunning Landing Pages in Minutes**
+
+PluginOps Landing Page Builder empowers you to create responsive pages, layouts, and landing pages effortlessly with its intuitive drag-and-drop interface.
+
+**Key Features**
+
+* Drag-and-drop visual editor
+* 120+ pre-designed templates
+* Responsive design for all devices
+* Built-in live form builder
+* Integration with popular email marketing services
+* SEO optimized and fast performance
+* Compatible with all modern themes
+* WooCommerce integration
+
+**Why Choose PluginOps Landing Page Builder?**
+
+PluginOps is designed for ease of use, allowing you to create professional and high-converting landing pages without any coding knowledge. Whether you're a marketer, business owner, or developer, our plugin provides the tools you need to boost conversions and grow your audience.
+
+
+**Live Demo**
+
+[Check out our live demo](https://bit.ly/3KpRwgW)
+
+**Watch Our Tutorial**
+
+PluginOps Landing Page Builder Tutorial
+
 https://www.youtube.com/watch?v=gUreU3ZDbVc
-
-= Try the free Live Demo Click here : =
-
-[ Live Demo ](https://bit.ly/3KpRwgW)
 
 Landing Page Builder plugin by PluginOps makes it really easy to build responsive <strong>Pages, Layouts and Landing Pages </strong>. Simple Visual Drag and drop, Make changes while you see them. Works with your themes and is purely based on HTML/CSS. Specifically designed for the creation of landing pages.
 
@@ -169,22 +194,25 @@ https://www.youtube.com/watch?v=VCnep3RyE8M
 
 == Frequently Asked Questions ==
 
-= Can I get rid of theme's header and footer with Page Builder plugin ? =
+= Can I remove my theme's header and footer with PluginOps Page Builder? =
 
-Yes, Page builder plugin allows you to create pages with and without theme's header and footer so you can have complete control over your designs. 
-You can also create designs for your theme's pages.
+Yes, you can create standalone pages without your theme's header and footer for a completely custom design. Select the **'Blank Page Template'** when creating your page.
 
-= Does this plugin mess with my theme ? = 
+= Does the plugin work with any WordPress theme? =
 
-No, The plugin does not modify or use the theme files. Your theme's design will stay as it is without any change.
+Absolutely! PluginOps Page Builder is compatible with almost all modern WordPress themes.
 
-= Does Page builder by PluginOps work with Posts, Pages and custom post types ? =
+= How do I save a page as a template? =
 
-Currently only custom pages and pages are supported but we will soon add support for custom post types as well.
+After designing your page, click on **'Save Template'** in the editor to reuse it later.
 
-= Can I use shortcodes in my pages created with this plugin ? =
+= Can I use shortcodes within the Page Builder? =
 
-Yes, this plugin support shortcodes so you can add any shortcode in your pages. 
+Yes, you can insert any shortcode into your pages using the **'Shortcode'** widget.
+
+= How do I get support or request a feature? =
+
+Please contact us at [support@pluginops.com](mailto:support@pluginops.com), and we'll be happy to assist you.
 
 = Can you design a page for me ? = 
 
@@ -291,3 +319,27 @@ Yes, Please contact us at support[at]pluginops[dot]com and we will get back to y
 
 * Bug Fixes
 * Security Update
+
+
+
+== Credits ==
+
+PluginOps Page Builder is developed and maintained by [PluginOps](https://pluginops.com/). We thank our contributors and the WordPress community for their support.
+
+
+== License ==
+
+This plugin is licensed under the GPLv2 or later.
+
+== Video Tutorials ==
+
+[![How to Create a Landing Page with PluginOps](https://img.youtube.com/vi/gUreU3ZDbVc/0.jpg)](https://www.youtube.com/watch?v=gUreU3ZDbVc)
+
+Watch our step-by-step guide on creating stunning landing pages.
+
+
+== Support and Feedback ==
+
+We value your feedback! If you have suggestions, feature requests, or need assistance, please [contact our support team](mailto:support@pluginops.com) or visit our [support forum](https://wordpress.org/support/plugin/page-builder-add).
+
+If you enjoy using PluginOps Page Builder, please [leave us a review](https://wordpress.org/support/plugin/page-builder-add/reviews/). Your support helps us improve!
