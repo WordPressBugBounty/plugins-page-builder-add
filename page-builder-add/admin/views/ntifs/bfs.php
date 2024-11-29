@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; 
 
 if( !function_exists("bfsNoticeDefault") ){
+    
     function bfsNoticeDefault(){
         $btnLink = 'https://pluginops.com/page-builder/?ref=specDiscount&src=wpdash&ut=0';
     
@@ -42,7 +43,7 @@ if( !function_exists("bfsNoticeDefault") ){
                         
                         <div style='text-align:center;'>
                             <p style='font-size:22px;'>PluginOps Landing Page Builder <br> <span style='font-size:34px;font-family:tourney; color:#EDCD60;'>Black Friday / <span style='color:#00BCD4;'> Cyber Monday </span> </span> - Upto 50% Off</p>
-                            <p style='font-size:12px;' >Valid through 20-30 November 2023 </p>
+                            <p style='font-size:12px;' >Valid only today! </p>
                             <br />
                             <a href='$btnLink' style='text-decoration:none; color:#fff; padding:10px 20px; font-size: 22px; background:#5f0ef7; border-radius:5px; ' >Avail Special Discount Now</a>
                         </div>

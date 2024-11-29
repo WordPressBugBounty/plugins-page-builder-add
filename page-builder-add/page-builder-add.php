@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Landing Pages - PluginOps Landing Page Builder, Coming Soon Builder, Maintenance Mode
 * Description: A drag and drop free responsive page builder that simplifies building your landing pages, coming soon pages & websites.
-* Version: 1.5.2.4
+* Version: 1.5.2.5
 * Author: PluginOps
 * Text Domain: page-builder-add
 * Domain Path: /languages

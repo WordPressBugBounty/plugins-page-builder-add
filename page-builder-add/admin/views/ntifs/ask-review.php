@@ -5,17 +5,46 @@ function plugOPB_check_installation_date() {
  
     $userId = get_current_user_id();
     $reviewNoticeOption = get_option('plugOPB_hide_bugs1two_'.$userId);
-    $specialOfferNoBugOp = get_option('plugOPB_hide_specialOffer_'.$userId);
+    //$specialOfferNoBugOp = get_option('plugOPB_hide_specialOffer_'.$userId);
 
+    // if (!$specialOfferNoBugOp) {
+
+    //     $install_date = get_option( 'plugOps_activation_date' );
+    //     $past_date = strtotime( '-3 days' );
+ 
+    //     if ( (int)$past_date > (int)$install_date ) {
+
+    //         if ( ! function_exists('ulpb_available_pro_widgets') ) {
+    //             add_action( 'admin_notices', 'plugOPB_display_lto_disc_notice' );
+    //         }
+
+    //     }
+    // }
+
+    $specialOfferNoBugOp = get_option('plugOPB_hide_specialOffera2_'.$userId);
     if (!$specialOfferNoBugOp) {
 
-        $install_date = get_option( 'plugOps_activation_date' );
-        $past_date = strtotime( '-3 days' );
+        $current_date = strtotime('now');
+        $start_date = strtotime('2024-11-29');
+        $end_date = strtotime('2024-12-03');
  
-        if ( (int)$past_date > (int)$install_date ) {
+        if ( $current_date >= $start_date && $current_date <= $end_date ) {
 
             if ( ! function_exists('ulpb_available_pro_widgets') ) {
-                add_action( 'admin_notices', 'plugOPB_display_lto_disc_notice' );
+                add_action( 'admin_notices', 'plugOPB_display_bfs_disc_notice' );
+            }
+
+        }else{
+
+            $install_date = get_option( 'plugOps_activation_date' );
+            $past_date = strtotime( '-3 days' );
+    
+            if ( (int)$past_date > (int)$install_date ) {
+
+                if ( ! function_exists('ulpb_available_pro_widgets') ) {
+                    add_action( 'admin_notices', 'plugOPB_display_lto_disc_notice' );
+                }
+
             }
 
         }
@@ -119,6 +148,20 @@ function plugOPB_display_lto_disc_notice() {
 
             include "lto-notice.php";
             echo ltoNoticeDefault();
+
+        }
+    }
+
+}
+
+function plugOPB_display_bfs_disc_notice() {
+ 
+    $current_screen = get_current_screen();        
+    if($current_screen){
+        if($current_screen->id == 'dashboard' || $current_screen->id == 'edit-ulpb_post' || $current_screen->id == 'ulpb_post' || $current_screen->id == 'ulpb_post_page_page-builder-new-landing-page' ){
+
+            include "bfs.php";
+            echo bfsNoticeDefault();
             
         }
     }
@@ -191,12 +234,12 @@ function plugOPB_set_no_bug() {
 
     if ( 1 == $holidaybug ) {
         $userId = get_current_user_id();
-        add_option( 'plugOPB_hide_specialOffer_'.$userId, TRUE );
+        add_option( 'plugOPB_hide_specialOffera2_'.$userId, TRUE );
     }
 
     
     // delete_option( 'plugOPB_hide_bugs1two_'.get_current_user_id() );
-    // delete_option( 'plugOPB_hide_specialOffer_'.get_current_user_id() );
+    // delete_option( 'plugOPB_hide_specialOffera2_'.get_current_user_id() );
     // delete_option( 'plugOPB_hide_welcomeNotice_'.get_current_user_id() );
 
     if ($welcomeNoticeNobug == 'hidewelcomenotice') {
