@@ -1,4 +1,4 @@
- <?php if ( ! defined( 'ABSPATH' ) ) exit;
+<?php if ( ! defined( 'ABSPATH' ) ) exit;
 
 error_reporting(0);
 
@@ -465,7 +465,9 @@ $defaultWidgetDataOps = array (
   'widgHideOnTablet' => '',
   'widgHideOnMobile' => '',
 );
-  
+
+
+$load_custom_pluginOps_Optins = array();
 
 $landingPageLinkTrackingFeature = get_option( 'landingPageLinkTrackingFeature', false );
 if ($landingPageLinkTrackingFeature != 'disabled' || $landingPageLinkTrackingFeature == false) {
@@ -1289,7 +1291,9 @@ if ($loadWpFooter == 'false') {
     $rowCount++;
   } // ForEach loop for rows ends here
 
-
+  foreach ($load_custom_pluginOps_Optins as $value) {
+    echo "<div class='customPluginOpsOptinContainer'>" . $value . "</div> \n";
+  }
 
   ob_start();
 
@@ -1544,8 +1548,6 @@ if ($loadWpFooter == 'false') {
 
   }
 
-    
-
 
   
   echo "<div class='popb_footer_scripts' style='display:none !important;'>";
@@ -1553,10 +1555,6 @@ if ($loadWpFooter == 'false') {
 
   $customFontsNames = array();
   $pluginops_customFontsSaved = get_option( 'popb_pluginops_custom_fonts', false );
-
-
-  
-
   if ( is_array($pluginops_customFontsSaved) ) {
     
       foreach ($pluginops_customFontsSaved as $key => $value) {

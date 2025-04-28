@@ -943,7 +943,7 @@
                       $shortcodeToArray = shortcode_parse_atts($generatedOptinShortcode);
 
 
-                      $shortcodeToArray['onclick'] = $onClickId;
+                      $shortcodeToArray['onclick'] = esc_attr($onClickId);
                       if (!isset( $shortcodeToArray['exitanimation'] )) {
                         $shortcodeToArray['exitanimation'] = '';
                       }
@@ -957,10 +957,10 @@
                         $shortcodeToArray[0] = '[pluginops_popup_form';
                       }
                       
-                      $generatedOptinShortcode = ' '.$shortcodeToArray[0].' template_id='.$shortcodeToArray['template_id'].' onclick='.$shortcodeToArray['onclick'].' entranceanimation='.$shortcodeToArray['entranceanimation'].' exitanimation='.$shortcodeToArray['exitanimation'].' ]';
+                      $generatedOptinShortcode = ' '.$shortcodeToArray[0].' template_id='.$shortcodeToArray['template_id'].' onclick='.esc_attr($shortcodeToArray['onclick']).' entranceanimation='.$shortcodeToArray['entranceanimation'].' exitanimation='.$shortcodeToArray['exitanimation'].' ]';
 
                       if ($shortcodeToArray[0] == '[pluginops_bar_form' || $shortcodeToArray[0] == '[pluginops_flyin_form' ) {
-                        $generatedOptinShortcode = ' '.$shortcodeToArray[0].' template_id='.$shortcodeToArray['template_id'].' onclick='.$shortcodeToArray['onclick'].' position='.$shortcodeToArray['position'].'  entranceanimation='.$shortcodeToArray['entranceanimation'].' exitanimation='.$shortcodeToArray['exitanimation'].' ]';
+                        $generatedOptinShortcode = ' '.$shortcodeToArray[0].' template_id='.$shortcodeToArray['template_id'].' onclick='.esc_attr($shortcodeToArray['onclick']).' position='.$shortcodeToArray['position'].'  entranceanimation='.$shortcodeToArray['entranceanimation'].' exitanimation='.$shortcodeToArray['exitanimation'].' ]';
                       }
 
                       return $generatedOptinShortcode;
@@ -969,6 +969,8 @@
                   $onClickId = 'btnLink-'.$this_widget_Optin_Id;
 
                   $renderredPopUp = do_shortcode( btn_widget_get_pluginops_optin_shortcode_from_id($this_widget_Optin_Id, $onClickId ) );
+
+                  array_push($load_custom_pluginOps_Optins, $renderredPopUp );
 
                   array_push($buttonLinkedPopUps,$this_widget_Optin_Id);
                   
@@ -1035,7 +1037,7 @@
 
               $this_btn_click_detectionScript = "
                 <style> .btn-$randomBtnClass:hover{ background-color: $btnHoverBgColor !important; background: $btnHoverBgColor !important; color:$btnHoverTextColor !important; transition: all .5s; }   .btn-$randomBtnClass { transition: all .5s; } </style>  ";
-              $this_widget_btn = $renderredPopUp."
+              $this_widget_btn = "
                 <div class='wdt-$this_column_type parent-btn-$randomBtnClass' style='text-align:$btnAllignment;margin:0 0 2px 0; padding:0;' >
                   <a href='".esc_url($btnLink)."' style='text-decoration:none !important;' target='$btnBlankAttr' id='btnLink-$randomBtnClass' ".$this_widget_btn_content['btnCAction']." >
                     <button class='btn-$randomBtnClass btnLink-".$this_widget_btn_content['btnWidgetPopUpId']."' $thisBtnStyles >$btnIconBefore $btnText  $btnIconAfter</button>
