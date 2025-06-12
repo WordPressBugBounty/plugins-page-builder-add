@@ -5,7 +5,7 @@ Requires at least: 4.4
 Tested up to: 6.8
 Requires PHP: 5.0
 Donate link : https://pluginops.com/page-builder/
-Stable tag: 1.5.2.9
+Stable tag: 1.5.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ PluginOps is designed for ease of use, allowing you to create professional and h
 
 **Live Demo**
 
-[Check out our live demo](https://bit.ly/3KpRwgW)
+[Check out our live demo](https://tastewp.com/shortlink/page-builder-add)
 
 **Watch Our Tutorial**
 

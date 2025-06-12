@@ -165,7 +165,7 @@
                 <?php include(ULPB_PLUGIN_PATH.'admin/views/UI/widgets/widget-formBuilder.php'); ?>
               </div>
               <div class="pbp-widgets wdt-contentSlider pbp_form" style="display: none;">
-                <?php include(ULPB_PLUGIN_PATH.'admin/views/UI/widgets/widget-contentSlider.php'); ?>
+               
               </div>
               <div class="pbp-widgets wdt-spacer pbp_form" style="display: none;">
                 <div class="pbp_form" style="background: #fff; padding:20px 10px 20px 25px; width: 99%;">
