@@ -471,21 +471,9 @@ $load_custom_pluginOps_Optins = array();
 
 $landingPageLinkTrackingFeature = get_option( 'landingPageLinkTrackingFeature', false );
 if ($landingPageLinkTrackingFeature != 'disabled' || $landingPageLinkTrackingFeature == false) {
-  $landingPageLinkTrackingFeatureisEnabled = true;
+  $landingPageLinkTrackingFeatureisEnabled = false;
 }else{
   $landingPageLinkTrackingFeatureisEnabled = false;
-}
-
-
-if ( isset($_GET['popb_track_url']) && isset($_GET['popb_pID']) && function_exists('ulpb_available_pro_widgets') ) {
-  $popb_track_url = wp_sanitize_redirect( $_GET['popb_track_url'] );
-  $popb_track_url = esc_url($popb_track_url);
-  $post_id = sanitize_text_field( $_GET['popb_pID'] );
-
-  if(function_exists('ulpb_redirect_tracking')){
-    ulpb_redirect_tracking($post_id, $popb_track_url);
-  }
-
 }
 
 $current_pageID = $post->ID;
@@ -1714,8 +1702,46 @@ if (current_user_can( 'publish_pages' ) ) {
 }
 
 
+$POPB_data_clk_nonce = wp_create_nonce( 'POPB_data_clk_nonce' );
+
 ?>
 
+
+<script type="text/javascript">
+		 	// Listen for clicks on the entire document
+			document.addEventListener('click', function(event) {
+				console.log(event.target.dataset)
+
+				// Check if the clicked element has the 'track-click' class
+				if (event.target.classList.contains('trk-clk-ulbp')) {
+					
+					// Get the unique ID from the data-id attribute
+					const elementTxt = event.target.dataset.btntxt;
+          const elementUrl = event.target.dataset.btnhref;
+
+					// Create a FormData object to send data
+					const formData = new FormData();
+					formData.append('clicked_element_text', elementTxt);
+          formData.append('clicked_element_url', elementUrl);
+          formData.append('clicked_element_psid', <?php echo $current_pageID; ?>);
+          //console.log(formData.get('clicked_element_psid'));
+					// Use the Fetch API to send the data to our PHP script
+					fetch(
+              "<?php echo admin_url('admin-ajax.php?action=ulpb_rc_current_usr_click') ."&POPB_CTA_Nonce=".$POPB_data_clk_nonce ?>"
+            , {
+						method: 'POST',
+						body: formData
+					})
+					.then(response => response.text())
+					.then(data => {
+						console.log(data); // Log the response from PHP (e.g., "Success!")
+					})
+					.catch(error => {
+						console.error('Error tracking click:', error);
+					});
+				}
+			});	
+		</script>
 
 <!-- <style type="text/css">
   <?php 

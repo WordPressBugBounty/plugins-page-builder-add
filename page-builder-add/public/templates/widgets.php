@@ -987,28 +987,6 @@
 
               if (function_exists('ulpb_available_pro_widgets') ) {
 
-
-                if (strpos($btnLink, 'http') !== false && $landingPageLinkTrackingFeatureisEnabled == true) {
-                  
-                  $thisPageLink = get_preview_post_link($post->ID);
-                  
-                  if ( get_post_status( $post->ID ) == 'publish') {
-                    $thisPageLink = str_replace('?preview=true', '' ,$thisPageLink );
-                  }
-                  $thisPageLinkParsed = parse_url($thisPageLink);
-
-                  if (isset($thisPageLinkParsed['query'])) {
-                    if ($thisPageLinkParsed['query']) {
-                    $btnLink = $thisPageLink."&popb_pID=".$current_pageID."&popb_track_url=".urlencode($btnLink);
-                    }else{
-                      $btnLink = $thisPageLink."?popb_pID=".$current_pageID."&popb_track_url=".urlencode($btnLink);
-                    }
-                  }else{
-                    $btnLink = $thisPageLink."?popb_pID=".$current_pageID."&popb_track_url=".urlencode($btnLink);
-                  }
-
-                }
-
                 if ($this_widget_btn_content['btnClickAction'] == 'addToCart') {
                   $btnLink = wc_get_cart_url().'?add-to-cart='.$this_widget_btn_content['btnWooProdID'];
                 }
@@ -1037,10 +1015,11 @@
 
               $this_btn_click_detectionScript = "
                 <style> .btn-$randomBtnClass:hover{ background-color: $btnHoverBgColor !important; background: $btnHoverBgColor !important; color:$btnHoverTextColor !important; transition: all .5s; }   .btn-$randomBtnClass { transition: all .5s; } </style>  ";
+                
               $this_widget_btn = "
                 <div class='wdt-$this_column_type parent-btn-$randomBtnClass' style='text-align:$btnAllignment;margin:0 0 2px 0; padding:0;' >
-                  <a href='".esc_url($btnLink)."' style='text-decoration:none !important;' target='$btnBlankAttr' id='btnLink-$randomBtnClass' ".$this_widget_btn_content['btnCAction']." >
-                    <button class='btn-$randomBtnClass btnLink-".$this_widget_btn_content['btnWidgetPopUpId']."' $thisBtnStyles >$btnIconBefore $btnText  $btnIconAfter</button>
+                  <a href='".esc_url($btnLink)."' style='text-decoration:none !important;' target='$btnBlankAttr' id='btnLink-$randomBtnClass' ".$this_widget_btn_content['btnCAction']."  class='trk-clk-ulbp' >
+                    <button class='trk-clk-ulbp btn-$randomBtnClass btnLink-".$this_widget_btn_content['btnWidgetPopUpId']."' $thisBtnStyles   data-btnhref='".esc_url($btnLink)."' data-btntxt='".esc_attr($btnText)."' >$btnIconBefore $btnText  $btnIconAfter</button>
                   </a>
                 </div> $this_btn_click_detectionScript 
                 ";

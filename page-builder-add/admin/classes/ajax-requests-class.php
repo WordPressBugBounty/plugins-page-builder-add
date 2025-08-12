@@ -37,6 +37,9 @@ class ULPB_Ajax_Requests {
 		add_action( 'wp_ajax_nopriv_ulpb_cta_click_conversion_record', array( $this,'ulpb_cta_click_conversion_record')  );
 		add_action( 'wp_ajax_ulpb_cta_click_conversion_record', array( $this,'ulpb_cta_click_conversion_record') );
 
+		add_action( 'wp_ajax_nopriv_ulpb_rc_current_usr_click', array( $this,'ulpb_rc_current_usr_click')  );
+		add_action( 'wp_ajax_ulpb_rc_current_usr_click', array( $this,'ulpb_rc_current_usr_click') );
+
 		add_action( 'wp_ajax_ulpb_loadShortcode_content', array( $this,'ulpb_loadShortcode_content') );
 
 		add_action( 'wp_ajax_ulpb_get_global_row_content', array( $this,'ulpb_get_global_row_content') );
@@ -2922,6 +2925,61 @@ function ulpb_cta_click_conversion_record(){
 		echo 'success';
 	   	exit;
 	}
+}
+
+function ulpb_rc_current_usr_click(){
+
+	if ( 
+	    ! isset( $_GET['POPB_CTA_Nonce'] )
+	    || ! wp_verify_nonce( $_GET['POPB_CTA_Nonce'], 'POPB_data_clk_nonce' )
+	) {
+	   echo 'Sorry, Security error.';
+	   exit;
+	}else{
+
+		$post_id = sanitize_text_field( $_POST['clicked_element_psid'] );
+		$popb_track_url = sanitize_text_field( $_POST['clicked_element_url'] );
+		if (!empty($post_id)) {
+			
+			$postStatus = get_post_status( $post_id );
+			if ($postStatus == 'publish') {
+		
+			  $allowed = array();
+			  $pluginOpsUserTimeZone = get_option('timezone_string');
+			  date_default_timezone_set($pluginOpsUserTimeZone);
+			  $todaysDate = date('d-m-Y');
+		
+			  $ctnTotal = get_post_meta($post_id,'ctnTotal',true);
+			  $ctnTotal++;
+			  $updateResultConversionCount = update_post_meta( $post_id, 'ctnTotal', $ctnTotal, $unique = false);
+			  $ctrLinks = get_post_meta($post_id,'ctrTpLinks',true);
+		
+			  if (! is_array($ctrLinks)) {
+				$ctrLinks = array();
+			  }
+		
+			  if (!isset($ctrLinks[$popb_track_url])) {
+				$ctrLinks[$popb_track_url] = array();
+			  }
+		
+			  if (!isset( $ctrLinks[$popb_track_url][$todaysDate] )) {
+				$ctrLinks[$popb_track_url][$todaysDate] = 0;
+			  }
+		
+			  $ctrLinks[$popb_track_url][$todaysDate]++;
+
+			  //echo $ctrLinks[$popb_track_url][$todaysDate];
+			  update_post_meta( $post_id, 'ctrTpLinks', $ctrLinks, $unique = false);
+		
+			}
+			
+			exit();
+		
+		  }
+
+		exit;
+	}
+
 }
 
 function ulpb_loadShortcode_content(){
