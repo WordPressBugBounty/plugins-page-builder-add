@@ -80,7 +80,7 @@
               $popb_csm_extra_options['allowByUserRoles'] = array();
             }
             $isSelected = in_array($role_name ,$popb_csm_extra_options['allowByUserRoles']) ? 'selected' : '';
-            echo "<option value='".$role_name."' ".$isSelected.">".$role_info['name']."</option>";
+            echo "<option value='".$role_name."' ".$isSelected.">".esc_attr($role_info['name'])."</option>";
           }
           ?>
         </select>
@@ -96,7 +96,7 @@
                 $popb_csm_extra_options['excludedUsers'] = array();
               }
               $isSelected = in_array($user->ID ,$popb_csm_extra_options['excludedUsers']) ? 'selected' : '';
-              echo "<option value='".$user->ID."' ".$isSelected." > ".$user->display_name." </option>";
+              echo "<option value='".$user->ID."' ".esc_attr($isSelected)." > ".esc_attr($user->display_name)." </option>";
             }
           ?>
         </select>
