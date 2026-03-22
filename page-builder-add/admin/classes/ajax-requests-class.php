@@ -1267,6 +1267,7 @@ function ulpb_formBuilderEmail_ajax(){
 			foreach ($_POST as $key => $value) {
 				$thisFieldName =  str_replace("field-$fieldCount-","",$key);
 				$thisFieldName =  str_replace("field-","",$thisFieldName);
+				$thisFieldName =  str_replace("$fieldCount ","",$thisFieldName);
 				$thisFieldName =  str_replace("-"," ", $thisFieldName);
 				$thisFieldName = sanitize_text_field($thisFieldName);
 				$thisFieldNameLower = strtolower($thisFieldName);
@@ -1294,6 +1295,7 @@ function ulpb_formBuilderEmail_ajax(){
 						'email_address',
 						'emailaddress',
 						'email address',
+						'2 email'
 					);
 
 					if ($thisFormEmailOptions['formEmailFormat'] == 'plain') {
@@ -1354,7 +1356,7 @@ function ulpb_formBuilderEmail_ajax(){
 						if ( in_array($thisFieldNameLower, $suggestedEmailFieldNames) ) { 
 							$mc_submitterEmail = sanitize_text_field($value);
 						}
-						if ($thisFieldNameLower == 'name' || $thisFieldNameLower == 'firstname' || $thisFieldNameLower == 'firstname' || $thisFieldNameLower == 'entername' || $thisFieldNameLower == 'yourname' || $thisFieldNameLower == 'namehere') {
+						if ($thisFieldNameLower == 'name' || $thisFieldNameLower == 'firstname' || $thisFieldNameLower == 'firstname' || $thisFieldNameLower == 'entername' || $thisFieldNameLower == 'yourname' || $thisFieldNameLower == 'namehere' || $thisFieldNameLower == 'fname') {
 							$submitterName = sanitize_text_field($value);
 						}
 					
@@ -1365,6 +1367,14 @@ function ulpb_formBuilderEmail_ajax(){
 
 				$fieldCount++;
 			}
+
+			
+
+			foreach ($merge_vars as $key => $value) {
+				$clean_key = preg_replace('/^\d+\s+/', '', $key);
+				$cleaned[$clean_key] = $value;
+			}
+			$merge_vars = $cleaned;
 
 
 			$pb_sendMail = false;
@@ -1846,7 +1856,7 @@ function ulpb_formBuilderEmail_ajax(){
 		            );
 	            }
 
-	            
+	           
 	            $json_data = json_encode($data);
 	            //$checkmcStatus = mc_checkuserstatus($email, false, $apikey, $listId, $dataCenter);
 	            $checkmcStatus = 'true';
