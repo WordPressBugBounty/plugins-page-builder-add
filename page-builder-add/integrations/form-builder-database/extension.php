@@ -81,7 +81,26 @@ function popb_formBuilder_database_renderFormDataTable($postID){
             $dataListSize = sizeof($formNameKeyEntry);
             $dataListSize = $dataListSize -1;
             $smfb_form_Fields = $formNameKeyEntry[0];
-            
+
+            // Build a canonical list of field columns as the union of all entries'
+            // fields (preserving first-seen order). Rendering every row against this
+            // fixed set guarantees the Delete/View buttons always land in the last two
+            // columns, even when an individual entry has fewer (or more) fields.
+            $fieldColumns = array();
+            foreach ($formNameKeyEntry as $smfb_entry_for_columns) {
+                if (!is_array($smfb_entry_for_columns)) {
+                    continue;
+                }
+                foreach ($smfb_entry_for_columns as $smfb_column_key => $smfb_column_val) {
+                    if ($smfb_column_key === 'defaultIndex') {
+                        continue;
+                    }
+                    if (!in_array($smfb_column_key, $fieldColumns, true)) {
+                        $fieldColumns[] = $smfb_column_key;
+                    }
+                }
+            }
+
             ?>
             <div class="PB_accordion_forms">
               <?php echo "<h4>$formNameKey</h4>"; ?>
@@ -91,13 +110,9 @@ function popb_formBuilder_database_renderFormDataTable($postID){
                 <table class='w3-table w3-striped w3-bordered w3-card-4 smfb_form_data_table' style="min-width: 650px;">
                 <tr style="background:#69C0FB; color: #fff; padding: 5px;" class="topHeaderRow_formTable">
                   <th> # </th>
-                <?php foreach ( $smfb_form_Fields as $smfb_field_name => $smfb_formBuilder_single_field) {
-                   $smfb_field_name = str_replace('_', ' ', $smfb_field_name);
-                       if ($smfb_field_name == 'defaultIndex') {
-                           continue;
-                       }else {
-                        echo "<th> $smfb_field_name </th>";
-                       }
+                <?php foreach ( $fieldColumns as $smfb_field_name) {
+                       $smfb_field_name_label = str_replace('_', ' ', $smfb_field_name);
+                       echo "<th> ".esc_html($smfb_field_name_label)." </th>";
                     } ?>
                   <th> Delete </th>
                   <th> View </th>
@@ -126,12 +141,12 @@ function popb_formBuilder_database_renderFormDataTable($postID){
                           <tr>
                             <td><br> <?php echo $entryCounter; ?> <br><br></td>
                             <?php
-                                foreach ($smfb_formBuilder_single_item as $singleValKey => $singleValue) {
-                                    if ($singleValKey == 'defaultIndex') {
-                                        continue;
-                                    }else{
-                                        echo "<td><br> ".esc_attr($singleValue)." <br><br></td>";
-                                    }
+                                // Iterate the canonical column list (not the entry's own keys) so every
+                                // row has the same cell count; missing fields render as empty cells. This
+                                // keeps the Delete/View buttons aligned in the last two columns.
+                                foreach ($fieldColumns as $columnKey) {
+                                    $singleValue = isset($smfb_formBuilder_single_item[$columnKey]) ? $smfb_formBuilder_single_item[$columnKey] : '';
+                                    echo "<td><br> ".esc_attr((string) $singleValue)." <br><br></td>";
                                 }
                             ?>
                         
@@ -161,29 +176,25 @@ function popb_formBuilder_database_renderFormDataTable($postID){
                             
                              echo "var allFormDataObject_$formNameKeyWithoutSpaces"; ?> = [ <?php 
                                 echo "[";
-                                    foreach ($formNameKeyEntry[0] as $key => $val) {
-                                        if ($key == 'defaultIndex') {
-                                            continue;
-                                        }else{
-                                            $key = str_replace('\'', '"', $key);
-                                            $key = str_replace('_', ' ', $key);
-                                            echo "'$key'".",";
-                                        }
-                                        
+                                    foreach ($fieldColumns as $key) {
+                                        $key = str_replace('\'', '"', $key);
+                                        $key = str_replace('_', ' ', $key);
+                                        // Emit as a JSON-encoded JS string literal so backslashes,
+                                        // quotes and "</script>" are safely escaped (prevents stored XSS).
+                                        echo json_encode( (string) $key ).",";
                                     }
                                     echo "],";
                               foreach ($formNameKeyEntry as $formNameKeyEntryKey => $smfb_formBuilder_single_item) {
 
-                                    $ThisForm_Field = $smfb_formBuilder_single_item;
                                     echo "[";
-                                    foreach ($ThisForm_Field as $key => $value) {
-                                        if ($key == 'defaultIndex') {
-                                            continue;
-                                        }else{
-                                            $value = str_replace('\'', '"', $value);
-                                            echo "'$value'".",";
-                                        }
-                                        
+                                    // Iterate the canonical column list so the downloaded CSV stays
+                                    // aligned with the table even when entries have differing fields.
+                                    foreach ($fieldColumns as $key) {
+                                        $value = isset($smfb_formBuilder_single_item[$key]) ? $smfb_formBuilder_single_item[$key] : '';
+                                        $value = str_replace('\'', '"', $value);
+                                        // Emit as a JSON-encoded JS string literal so backslashes,
+                                        // quotes and "</script>" are safely escaped (prevents stored XSS).
+                                        echo json_encode( (string) $value ).",";
                                     }
                                     echo "],";
 

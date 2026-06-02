@@ -2,10 +2,10 @@
 Contributors: pluginops
 Tags: landing page builder, coming soon page, maintenance mode page, lead page, page builder
 Requires at least: 4.4
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 5.0
 Donate link : https://pluginops.com/page-builder/
-Stable tag: 1.5.3.5
+Stable tag: 1.5.3.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -240,6 +240,12 @@ Yes, Please contact us at support[at]pluginops[dot]com and we will get back to y
 
 
 == Upgrade Notice ==
+
+
+= Security Update = 
+
+* Security Fixes
+* Bug Fixes
 
 
 = V 1.5.2.1 = 
