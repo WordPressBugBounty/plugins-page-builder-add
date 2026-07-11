@@ -126,7 +126,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     }
   }
 
-  $pbFormBuilderUniqueId = 'pb_FormBuilder_'.(rand(500,1000)*2)*rand(10,500);
+  $pbFormBuilderUniqueId = 'pb_FormBuilder_'.popb_next_element_uid();
   
   $formBuilderbtnIcon = '';$formBuilderbtnIconBefore = '';$formBuilderbtnIconAfter = '';$formBuilderbtnIconAnimation = '';$formBuilderbtnIconHoverAnimationScript = '';
   if (isset($widgetPbFbFormSubmitOptions['formBuilderbtnSelectedIcon'])) {

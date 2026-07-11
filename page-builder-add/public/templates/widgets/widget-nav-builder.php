@@ -23,7 +23,9 @@ foreach ($allNavItems as $key => $val)
     $pbAllNavItemsHtml = $pbListPrevItem . $pbListThisItem;
 }
 
-$pbCustomId = 'pb_navMenu_' . (rand(500, 1000) * 2) * rand(10, 500);
+// Deterministic per-instance ID (row + column + widget index) so the generated CSS
+// is identical across requests and can be cached/printed in the <head>.
+$pbCustomId = 'pb_navMenu_' . $row["rowID"] . '_' . $Columni . '_' . $j;
 
 if (!isset($allNavStyles['cnsresop']))
 {

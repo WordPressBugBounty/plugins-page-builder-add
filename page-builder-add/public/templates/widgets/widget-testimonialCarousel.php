@@ -73,7 +73,7 @@
 
   }
 
-  $pbTCarouselUniqueCode =  (rand(500,1000)*2)*rand(10,500);
+  $pbTCarouselUniqueCode =  popb_next_element_uid();
   $pbTCarouselUniqueId = 'pb_testimonialCarousel_' .$pbTCarouselUniqueCode;
   $pbCarouselScript = "
 

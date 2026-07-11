@@ -3,6 +3,17 @@
 error_reporting(0);
 
 
+// Sequential per-request element IDs. Unlike rand(), the same page content yields the
+// same IDs on every request, so the generated CSS is deterministic and cacheable.
+if (!function_exists('popb_next_element_uid')) {
+  function popb_next_element_uid(){
+    if (!isset($GLOBALS['popb_element_uid_counter'])) { $GLOBALS['popb_element_uid_counter'] = 0; }
+    $GLOBALS['popb_element_uid_counter']++;
+    return $GLOBALS['popb_element_uid_counter'];
+  }
+}
+
+
 if (!function_exists('mergeNonSetObjectValues')) {
 
   function mergeNonSetObjectValues($source,$target){
@@ -1314,13 +1325,27 @@ if ($loadWpFooter == 'false') {
   ob_end_clean();
 
 
-  if ($loadWpFooter == 'true') {
+  $ulpb_head_printed_css = isset($GLOBALS['ulpb_head_printed_css']) ? $GLOBALS['ulpb_head_printed_css'] : '';
 
-    wp_add_inline_style( 'pluginops-landingpage-style-css', $these_row_styles_inline );
+  // If the cached generated CSS was already printed in the <head> and still matches, don't output it again.
+  if ($ulpb_head_printed_css !== $these_row_styles_inline) {
 
-  }else{
+    // wp_add_inline_style is lost if the handle was already printed or never enqueued, so echo directly in those cases.
+    if ($loadWpFooter == 'true' && wp_style_is( 'pluginops-landingpage-style-css', 'enqueued' ) && ! wp_style_is( 'pluginops-landingpage-style-css', 'done' ) ) {
 
-    echo '<style>'. $these_row_styles_inline . '</style>';
+      wp_add_inline_style( 'pluginops-landingpage-style-css', $these_row_styles_inline );
+
+    }else{
+
+      echo '<style>'. $these_row_styles_inline . '</style>';
+
+    }
+
+    // Cache so the next request can print this CSS in the <head>. Skip A/B variants and
+    // shortcode templates: their CSS doesn't belong to the queried post the head hook reads from.
+    if ($abTestingActive == false && $isShortCodeTemplate !== true) {
+      update_post_meta( $current_pageID, '_ulpb_generated_page_css', $these_row_styles_inline );
+    }
 
   }
   

@@ -32,7 +32,7 @@
     );
 
     $the_query = new WP_Query( $args );
-  $PSrandID = (rand(500,1000)*2)*rand(10,500);
+  $PSrandID = popb_next_element_uid();
   $DotColor = '#333';
 
   $psScripts = ' ';

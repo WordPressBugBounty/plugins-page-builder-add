@@ -12,7 +12,7 @@
   $tabContent = $this_widget['tabContent'];
   $tabContentTypography = $this_widget['tabContent']['typography'];
 
-  $uniquetabId = (rand(500,1000)*2)*rand(10,500);
+  $uniquetabId = popb_next_element_uid();
 
   $allTabTitles = '';
   $allTabContent = '';

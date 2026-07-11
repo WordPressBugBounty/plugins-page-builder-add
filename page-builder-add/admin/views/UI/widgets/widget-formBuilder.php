@@ -310,7 +310,7 @@ if ($pbp_is_MCextensionActive == true) {
                         <option value="" disabled="disabled">Aweber (Pro Only)</option>
                         <option value="" disabled="disabled">Drip (Pro Only)</option>
                         <option value="" disabled="disabled">MarketHero (Pro Only)</option>
-                        <option value="" disabled="disabled">SendInBlue (Pro Only)</option>
+                        <option value="" disabled="disabled">Brevo (formerly SendinBlue) (Pro Only)</option>
                         <option value="" disabled="disabled"> ConvertKit (Pro Only)</option>
                         <option value="" disabled="disabled"> MailPoet (Pro Only)</option>
                         <option value="" disabled="disabled"> ConstantContact (Pro Only)</option>

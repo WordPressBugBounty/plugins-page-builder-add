@@ -10,7 +10,7 @@
   $accordionContent = $this_widget['accordionContent'];
   $accordionContentTypography = $this_widget['accordionContent']['typography'];
 
-  $uniqueAccordionId = (rand(500,1000)*2)*rand(10,500);
+  $uniqueAccordionId = popb_next_element_uid();
 
   $allAccordionItems = '';
 

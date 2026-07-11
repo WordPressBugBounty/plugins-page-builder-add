@@ -107,9 +107,35 @@ class ULPB_AdminClass {
 			add_filter('the_content',array($this,'ulpb_pagebuilder_content_filter'), 25 );
 		}
 
+		add_action( 'wp_enqueue_scripts', array($this, 'ulpb_enqueue_landingpage_head_styles') );
+
 		add_filter( 'template_include', array($this,'ulpb_pagebuilder_replace_default_page_template') );
 
 		add_filter('display_post_states', array($this, 'add_pluginOps_post_state_to_table'), 10, 2);
+
+	}
+
+	// Load the builder's base stylesheet and the cached per-page generated CSS in the <head>,
+	// so pages don't render unstyled until the footer styles arrive.
+	function ulpb_enqueue_landingpage_head_styles(){
+
+		$queried_id = get_queried_object_id();
+		if ( ! $queried_id ) {
+			return;
+		}
+
+		$data = get_post_meta( $queried_id, 'ULPB_DATA', true );
+		if ( empty( $data ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'pluginops-landingpage-style-css', ULPB_PLUGIN_URL.'/public/templates/style.css', array(), '1.0', 'all' );
+
+		$cached_page_css = get_post_meta( $queried_id, '_ulpb_generated_page_css', true );
+		if ( ! empty( $cached_page_css ) && is_string( $cached_page_css ) ) {
+			wp_add_inline_style( 'pluginops-landingpage-style-css', $cached_page_css );
+			$GLOBALS['ulpb_head_printed_css'] = $cached_page_css;
+		}
 
 	}
 

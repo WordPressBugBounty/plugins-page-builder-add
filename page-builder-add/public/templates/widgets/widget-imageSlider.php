@@ -26,7 +26,7 @@ $pbSliderPause = $widget_imageSlider['pbSliderPause'];
     $contentSlider = true;
   }
 
-  $pbImageSliderUniqueId = (rand(500,1000)*2)*rand(10,500);
+  $pbImageSliderUniqueId = popb_next_element_uid();
   $pbImageSliderUniqueId = "popb_Slider_"."$pbImageSliderUniqueId";
 
   $pbSliderContainer =  "<div class='rslides_container' style='min-height:100px;'> <ul class='rslides' id='".$pbImageSliderUniqueId."'>";

@@ -220,7 +220,7 @@ if($widgetHeadlineTextType !== 'Default'){
 
 if($widgetHeadlineTextType === "Animated"){
 
-  $animatedWidgetUniqueID  = 'pluginops-animated-text-'.(rand(500,1000)*2)*rand(10,500);
+  $animatedWidgetUniqueID  = 'pluginops-animated-text-'.popb_next_element_uid();
 
 
   $animationBeforeText = (isset($this_widget_text['animationBeforeText'])) ? $this_widget_text['animationBeforeText'] : '';
@@ -399,7 +399,7 @@ if($widgetHeadlineTextType === "Animated"){
 
 if($widgetHeadlineTextType === "Highlighted"){
 
-  $animatedWidgetUniqueID  = 'pluginops-animated-text-'.(rand(500,1000)*2)*rand(10,500);
+  $animatedWidgetUniqueID  = 'pluginops-animated-text-'.popb_next_element_uid();
 
   $selectedHighlight = (isset($this_widget_text['widgetHeadlineTextHighlight']) ) ? $this_widget_text['widgetHeadlineTextHighlight'] : '';
 
@@ -410,7 +410,7 @@ if($widgetHeadlineTextType === "Highlighted"){
 
   $animationAfterText = (isset($this_widget_text['animationAfterText'])) ? $this_widget_text['animationAfterText'] : '';
 
-  $animatedWidgetSvgUniqueID = 'pluginops-animated-svg-'.(rand(500,1000)*2)*rand(10,500);
+  $animatedWidgetSvgUniqueID = 'pluginops-animated-svg-'.popb_next_element_uid();
 
 
   $svgElement = "

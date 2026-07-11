@@ -108,9 +108,9 @@ function ulpb_admin_ajax(){
 
 	if( current_user_can('editor') || current_user_can('administrator') ) {
 
-		$nonce = false;
-		if ( $nonce) {
-			die( 'Invalid Nonce' ); 
+		$POPB_data_Nonce = isset( $_REQUEST['POPB_nonce'] ) ? $_REQUEST['POPB_nonce'] : '';
+		if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
+			die( 'Invalid Nonce' );
 		}else{
 
 			error_reporting(0);
@@ -122,6 +122,10 @@ function ulpb_admin_ajax(){
 			if($requestMethod == 'GET') {
 
 		    	$page_id = intval($_GET['page_id']);
+		    	// Ensure the current user may edit this specific post (defence in depth; the nonce above already blocks CSRF).
+		    	if ( get_post( $page_id ) && ! current_user_can( 'edit_post', $page_id ) ) {
+		    		die( 'You are not allowed to access this post.' );
+		    	}
 		    	$data = get_post_meta( $page_id, 'ULPB_DATA', true );
 
 		    	if (isset( $data['RowsDivided'] )) {
@@ -195,6 +199,10 @@ function ulpb_admin_ajax(){
 				}
 
 				$page_id  = intval($data['pageID']);
+				// Ensure the current user may edit this specific post (defence in depth; the nonce above already blocks CSRF).
+				if ( get_post( $page_id ) && ! current_user_can( 'edit_post', $page_id ) ) {
+					die( 'You are not allowed to edit this post.' );
+				}
 				$postType  = sanitize_text_field( $data['postType'] );
 				$pageStatus = sanitize_text_field($data['pageStatus']);
 				$pageTitle    = sanitize_text_field($data['pageOptions']['pageSeoName']);
@@ -314,6 +322,7 @@ function ulpb_admin_ajax(){
 
 				$dataTestprev = get_post_meta( $page_id, 'ULPB_DATA', true );
 				update_post_meta( $page_id, 'ULPB_DATA', $data );
+				delete_post_meta( $page_id, '_ulpb_generated_page_css' ); // stale generated CSS; rebuilt on next front-end view
 				update_post_meta( $page_id, 'ULPB_FrontPage', $setFrontPage);
 				update_post_meta( $page_id, 'ULPB_loadWpHead', $loadWpHead);
 				update_post_meta( $page_id, 'ULPB_loadWpFooterTwo', $loadWpFooter);
@@ -346,6 +355,7 @@ function ulpb_admin_ajax(){
 
 
 function ulpb_settings_page_ajax(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$plugOps_pageBuilder_settings_nonce = $_REQUEST['POPB_settings_page_nonce'];
 	if ( ! wp_verify_nonce( $plugOps_pageBuilder_settings_nonce, 'POPB_settings_nonce' ) ) {
@@ -406,6 +416,7 @@ function ulpb_settings_page_ajax(){
 
 
 function ulpb_settings_comingsoon_ajax(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$plugOps_pageBuilder_settings_nonce = $_REQUEST['POPB_settings_page_nonce'];
 	if ( ! wp_verify_nonce( $plugOps_pageBuilder_settings_nonce, 'POPB_settings_nonce' ) ) {
@@ -473,6 +484,7 @@ function ulpb_settings_comingsoon_ajax(){
 }
 
 function ulpb_tracking_scripts_data(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$plugOps_pageBuilder_settings_nonce = $_REQUEST['POPB_settings_page_nonce'];
 	if ( ! wp_verify_nonce( $plugOps_pageBuilder_settings_nonce, 'POPB_settings_nonce' ) ) {
@@ -2062,6 +2074,17 @@ function ulpb_formBuilderEmail_ajax(){
 
 			function sendInBlueSendFormBuilderData( $name,$email, $customs, $wfbSibApiKey,$wfbSibListIds,$formNameText) {
 
+				// Brevo treats contact attribute keys case-insensitively (it stores them uppercased).
+				// Form field names keep their original casing, so keys that differ only in case
+				// (e.g. a "Name" field alongside the "NAME" injected below) get rejected by Brevo
+				// with "Duplicate attribute keys are not allowed". Normalise keys to uppercase here
+				// so case-variants collapse into a single attribute, matching Brevo's own behaviour.
+				$normalizedCustoms = array();
+				foreach ( (array) $customs as $customKey => $customValue ) {
+					$normalizedCustoms[ strtoupper( trim( $customKey ) ) ] = $customValue;
+				}
+				$customs = $normalizedCustoms;
+
 				if (!isset($customs['NAME'])) {
 					$customs['NAME'] = $name;
 				}
@@ -2089,7 +2112,7 @@ function ulpb_formBuilderEmail_ajax(){
 				$curl = curl_init();
 
 				curl_setopt_array($curl, array(
-				  CURLOPT_URL => "https://api.sendinblue.com/v3/contacts",
+				  CURLOPT_URL => "https://api.brevo.com/v3/contacts",
 				  CURLOPT_RETURNTRANSFER => true,
 				  CURLOPT_ENCODING => "",
 				  CURLOPT_MAXREDIRS => 10,
@@ -2711,6 +2734,7 @@ function ulpb_formBuilderEmail_ajax(){
 
 
 function ulpb_getMCGroupIds(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 	
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
@@ -2725,7 +2749,16 @@ function ulpb_getMCGroupIds(){
 		list(, $server) = explode('-', $apikey);
 
 		if ($apikey != '' && $listid != '') {
-				$response = wp_remote_get( 'https://'.$server.'.api.mailchimp.com/3.0/lists/'.$listid.'/interest-categories/', array(
+			$ulpb_mc_base = 'https://'.$server.'.api.mailchimp.com/3.0/lists/'.$listid.'/interest-categories/';
+			$ulpb_mc_host = wp_parse_url( $ulpb_mc_base, PHP_URL_HOST );
+			$ulpb_mc_ip = $ulpb_mc_host ? gethostbyname( $ulpb_mc_host ) : '';
+			// SSRF protection: MailChimp host is derived from the API key; reject internal/reserved targets.
+			if ( ! wp_http_validate_url( $ulpb_mc_base ) || filter_var( $ulpb_mc_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
+				while ( ob_get_status() ) { ob_end_clean(); }
+				echo json_encode( array( 'error' => 'Invalid API key' ) );
+				exit();
+			}
+				$response = wp_safe_remote_get( 'https://'.$server.'.api.mailchimp.com/3.0/lists/'.$listid.'/interest-categories/', array(
 				'headers' => array('Content-Type' => 'application/json; charset=utf-8' , 'Authorization' => 'Basic '.$auth),
 				'method' => 'GET',
 				'timeout' => 5,
@@ -2750,7 +2783,7 @@ function ulpb_getMCGroupIds(){
 
 		$mcGroupsCombined = array();
 		foreach ($responseBodyCats as $value) {
-			$responseThree = wp_remote_get( 'https://'.$server.'.api.mailchimp.com/3.0/lists/'.$listid.'/interest-categories/'.$value->id.'/interests/', 
+			$responseThree = wp_safe_remote_get( 'https://'.$server.'.api.mailchimp.com/3.0/lists/'.$listid.'/interest-categories/'.$value->id.'/interests/', 
 				array(
 					'headers' => array('Content-Type' => 'application/json; charset=utf-8' , 'Authorization' => 'Basic '.$auth),
 					'method' => 'GET',
@@ -2797,6 +2830,7 @@ function ulpb_getMCGroupIds(){
 }
 
 function ulpb_getMailRelayGroupIds(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -2813,10 +2847,19 @@ function ulpb_getMailRelayGroupIds(){
 				$accountUrl = str_replace('https://','',$accountUrl);
 				$accountUrl = str_replace('http://','',$accountUrl);
 			}
+			$ulpb_mailrelay_api_url = "https://$accountUrl/api/v1/groups?page=1&per_page=200";
+			// SSRF protection: reject internal/reserved hosts and disallowed schemes/ports.
+			$ulpb_mailrelay_api_host = wp_parse_url( $ulpb_mailrelay_api_url, PHP_URL_HOST );
+			$ulpb_mailrelay_api_ip = $ulpb_mailrelay_api_host ? gethostbyname( $ulpb_mailrelay_api_host ) : '';
+			if ( ! wp_http_validate_url( $ulpb_mailrelay_api_url ) || filter_var( $ulpb_mailrelay_api_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
+				while ( ob_get_status() ) { ob_end_clean(); }
+				echo 'Invalid account URL';
+				exit();
+			}
 			$curl = curl_init();
 
 			curl_setopt_array($curl, array(
-			  CURLOPT_URL => "https://$accountUrl/api/v1/groups?page=1&per_page=200",
+			  CURLOPT_URL => $ulpb_mailrelay_api_url,
 			  CURLOPT_RETURNTRANSFER => true,
 			  CURLOPT_ENCODING => "",
 			  CURLOPT_MAXREDIRS => 10,
@@ -2856,6 +2899,7 @@ function ulpb_getMailRelayGroupIds(){
 
 
 function ulpb_getCkSequenceIds(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3193,6 +3237,7 @@ function ulpb_update_pagebuilder_active_option(){
 
 
 function ulpb_empty_form_builder_data(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 	$POPB_data_Nonce = $_REQUEST['submitNonce'];
 		if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
 			die( 'Security check' ); 
@@ -3216,6 +3261,7 @@ function ulpb_empty_form_builder_data(){
 }
 
 function ulpb_delete_form_builder_entry(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['submitNonce'];
 		if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3250,6 +3296,7 @@ function ulpb_delete_form_builder_entry(){
 
 
 function ulpb_delete_optin_analytics(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 		$POPB_data_Nonce = $_REQUEST['submitNonce'];
 		if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3283,6 +3330,7 @@ function ulpb_delete_optin_analytics(){
 }
 
 function ulpb_get_new_analytics(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 		$POPB_data_Nonce = $_REQUEST['submitNonce'];
 		if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3603,6 +3651,7 @@ function ulpb_RenderAnalytics($postID, $loadGraphs, $uniqID = 'default', $dateRa
 
 
 function popb_get_form_submissions(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['submitNonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3637,6 +3686,7 @@ function popb_get_form_submissions(){
 
 
 function popb_send_user_feedback(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	if ( ! check_ajax_referer() ) {
 		die( 'security error' );
@@ -3709,6 +3759,7 @@ function popb_send_user_feedback(){
 
 
 function ulpb_aweber_connect(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3771,6 +3822,7 @@ function ulpb_aweber_connect(){
 
 
 function ulpb_aweber_connection_check(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	if(!isset($_REQUEST['POPB_nonce'])){
 		return;
@@ -3835,6 +3887,7 @@ function ulpb_aweber_connection_check(){
 
 
 function get_sample_permalink_for_landingpages() {
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3856,6 +3909,7 @@ function get_sample_permalink_for_landingpages() {
 }
 
 function popb_update_data_collection_option() {
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['submitNonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3885,6 +3939,7 @@ function popb_update_data_collection_option() {
 
 
 function ulpb_getConstantContactLists(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -3952,6 +4007,7 @@ function ulpb_getConstantContactLists(){
 
 
 function popb_enable_safe_mode(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -4068,6 +4124,7 @@ function popb_enable_safe_mode(){
 
 
 function popb_get_row_blocks(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 
 	$POPB_data_Nonce = $_REQUEST['submitNonce'];
@@ -4113,6 +4170,7 @@ function popb_get_row_blocks(){
 
 
 function popb_get_template(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 
 	$POPB_data_Nonce = $_REQUEST['submitNonce'];
@@ -4158,6 +4216,7 @@ function popb_get_template(){
 
 
 function popb_update_custom_fonts(){
+	if ( ! current_user_can( 'edit_pages' ) ) { die( 'You are not allowed to perform this action.' ); }
 
 	$POPB_data_Nonce = $_REQUEST['POPB_nonce'];
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce' ) ) {
@@ -4209,6 +4268,18 @@ function popb_update_databaseUrls_imageLib(){
 	if ( ! wp_verify_nonce( $POPB_data_Nonce, 'POPB_data_nonce_imageLib_reset' ) ) {
 		die( 'Security check' ); 
 	}else{
+
+		// Restrict this expensive, site-wide postmeta rewrite to administrators (was nonce-only).
+		if ( ! current_user_can( 'manage_options' ) ) {
+			die( 'You are not allowed to perform this action.' );
+		}
+
+		// Rate-limit: this runs unindexed full-table LIKE scans + mass update_post_meta,
+		// so throttle it to at most once per minute to prevent hammering / accidental re-runs.
+		if ( get_transient( 'popb_imagelib_url_update_running' ) ) {
+			die( 'This operation was run very recently. Please wait a moment and try again.' );
+		}
+		set_transient( 'popb_imagelib_url_update_running', 1, MINUTE_IN_SECONDS );
 
 		$time_start = microtime(true);
 

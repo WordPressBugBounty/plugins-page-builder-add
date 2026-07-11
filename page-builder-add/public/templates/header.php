@@ -499,10 +499,25 @@ if ( function_exists('ulpb_available_pro_widgets') ) { echo " <!--- PluginOps Ty
 
 wp_enqueue_style( 'dashicons' );
 
-if ($loadWpFooter == 'true') {
+if ($loadWpFooter == 'true' && did_action( 'wp_enqueue_scripts' ) ) {
   wp_enqueue_style( 'pluginops-landingpage-style-css', ULPB_PLUGIN_URL.'/public/templates/style.css', array(), '1.0', $media = 'all' );
 }else{
-  echo "<link rel='stylesheet' href='".ULPB_PLUGIN_URL."/public/templates/style.css"."'>";
+  // Either wp_head/wp_enqueue_scripts never ran on this page (an enqueue would only print in
+  // the footer, after the content) or direct output was requested. Print the <link> here,
+  // before the rows, unless the head hook already handled it.
+  if ( ! wp_style_is( 'pluginops-landingpage-style-css', 'enqueued' ) && ! wp_style_is( 'pluginops-landingpage-style-css', 'done' ) ) {
+    echo "<link rel='stylesheet' href='".ULPB_PLUGIN_URL."/public/templates/style.css"."'>";
+  }
+}
+
+// If the wp_enqueue_scripts head hook couldn't print the cached generated CSS (pages that
+// skip wp_head), print it here so the rows below render styled on first paint.
+if ( ! isset($GLOBALS['ulpb_head_printed_css']) && $isShortCodeTemplate !== true ) {
+  $ulpb_early_generated_css = get_post_meta( $current_pageID, '_ulpb_generated_page_css', true );
+  if ( ! empty($ulpb_early_generated_css) && is_string($ulpb_early_generated_css) ) {
+    echo '<style id="pluginops-landingpage-generated-css">'. $ulpb_early_generated_css .'</style>';
+    $GLOBALS['ulpb_head_printed_css'] = $ulpb_early_generated_css;
+  }
 }
 
 

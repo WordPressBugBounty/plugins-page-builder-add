@@ -104,12 +104,12 @@
 
       <div class="csm-option-container" style="display:none !important;">
         <label>Exclude By IP Address</label>
-        <textarea  name="excludedIpAddress" id="excludedIpAddress" value="<?php echo $popb_csm_extra_options['excludedIpAddress']; ?>" rows="4" >  <?php echo $popb_csm_extra_options['excludedIpAddress']; ?> </textarea>
+        <textarea  name="excludedIpAddress" id="excludedIpAddress" value="<?php echo esc_attr( $popb_csm_extra_options['excludedIpAddress'] ); ?>" rows="4" >  <?php echo esc_textarea( $popb_csm_extra_options['excludedIpAddress'] ); ?> </textarea>
       </div> 
 
       <div class="csm-option-container" style="display:none !important;">
         <label>Exclude By Page Slug</label>
-        <textarea  name="exludePages" id="exludePages" value="<?php echo $popb_csm_extra_options['exludePages']; ?>" rows="4"> <?php echo $popb_csm_extra_options['exludePages']; ?> </textarea>
+        <textarea  name="exludePages" id="exludePages" value="<?php echo esc_attr( $popb_csm_extra_options['exludePages'] ); ?>" rows="4"> <?php echo esc_textarea( $popb_csm_extra_options['exludePages'] ); ?> </textarea>
       </div> 
 
     </div>

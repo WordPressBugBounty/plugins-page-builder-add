@@ -29,6 +29,8 @@ if( !function_exists("bfsNoticeDefault") ){
         }
 
         $nobugurl = $thisDefaultUrlProtocol.$nobugurl;
+        // Reflected-XSS guard: sanitise self-referential dismiss URL built from HTTP_HOST/REQUEST_URI.
+        $nobugurl = esc_url( $nobugurl );
 
         $install_date = get_option( 'plugOPB_activation_date' );
 

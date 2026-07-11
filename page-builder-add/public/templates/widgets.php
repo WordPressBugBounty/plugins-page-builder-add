@@ -382,7 +382,7 @@
                 $imgUrl  = esc_url($this_widget_img_content['imgUrl']);
                 $imgSize = esc_attr($this_widget_img_content['imgSize']);
                 $imgAlignment = esc_attr($this_widget_img_content['imgAlignment']);
-                $uniqueImgId = 'pb_img'.(rand(500,1000)*2)*rand(10,500) ;
+                $uniqueImgId = 'pb_img'.popb_next_element_uid() ;
                 $imgCustomSize = '';
 
                 if (!isset( $this_widget_img_content['imgAlt'] )) {
@@ -768,7 +768,10 @@
                 $contentAlignment = $imgAlignment;
 
               } catch (\Throwable $th) {
-                var_dump($th);
+                // Log server-side only; never expose exception details (paths/stack trace) on public pages.
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                  error_log( 'page-builder-add image widget render error: ' . $th->getMessage() );
+                }
               }
 
             break;
@@ -780,7 +783,7 @@
             case 'wigt-btn-gen':
 
               // BTN Widget
-              $randomBtnClass = (rand(500,1000)*2)*rand(10,500);
+              $randomBtnClass = popb_next_element_uid();
               $this_widget_btn_content = $thisWidget['widgetButton'];
               $btnText = $this_widget_btn_content['btnText'];
               $btnAllignment = esc_attr( $this_widget_btn_content['btnButtonAlignment'] );
@@ -1080,7 +1083,7 @@
 
                 ob_start();
                 $this_widget_subscribeForm = $thisWidget['widgetSubscribeForm'];
-                $pbFormID = (rand(500,1000)*2)*rand(10,500);
+                $pbFormID = popb_next_element_uid();
                 $formLayout = $this_widget_subscribeForm['formLayout'];
                 $showNameField = $this_widget_subscribeForm['showNameField'];
                 $successAction = $this_widget_subscribeForm['successAction'];
@@ -1137,7 +1140,7 @@
                   $formBtnFontSizeMobile = '';
                 }
 
-                $randomFormBtnClass = (rand(500,1000)*2)*rand(10,500);
+                $randomFormBtnClass = popb_next_element_uid();
                 $formbtnIcon = ''; $formbtnIconBefore = ''; $formbtnIconAfter = ''; $formbtnIconAnimation = ''; $formbtnIconHoverAnimationScript = '';
                 if (isset($this_widget_subscribeForm['formbtnSelectedIcon']) ) {
                   $formbtnSelectedIcon = $this_widget_subscribeForm['formbtnSelectedIcon'];
@@ -1387,7 +1390,7 @@
                 $pbIconRotation = esc_attr($this_widget_widgetIcons['pbIconRotation']);
                 $pbIconColor = esc_attr($this_widget_widgetIcons['pbIconColor']);
                 $iconPadding =  (int)$pbIconSize / 3 + 5;
-                $randomClass = (rand(500,1000)*2)*rand(10,500);
+                $randomClass = popb_next_element_uid();
 
                 $pbIconLinkOpen = '_self';
                 if( isset($this_widget_widgetIcons['pbIconLinkOpen']) ){
@@ -1466,7 +1469,7 @@
               break;
               case 'wigt-pb-counter':
                 $this_widget_counter = $thisWidget['widgetCounter'];
-                $pbCounterID = (rand(500,1000)*2)*rand(10,500);
+                $pbCounterID = popb_next_element_uid();
                 $counterStartingNumber = $this_widget_counter['counterStartingNumber'];
                 $counterEndingNumber = $this_widget_counter['counterEndingNumber'];
                 $counterNumberPrefix = $this_widget_counter['counterNumberPrefix'];
@@ -1813,7 +1816,7 @@
               }
 
               $countDownCookieId = 'pluginops_countdownTimer_'.$rowID.$Columni.'_'.$j;
-              $countDownId = (rand(500,1000)*2)*rand(10,500);
+              $countDownId = popb_next_element_uid();
               $countDownScript = "
 
                 (function($){
@@ -1965,7 +1968,7 @@
               }
 
               
-              $pbProgressBarUniqueId = 'pb_progressBar_'.(rand(500,1000)*2)*rand(10,500);
+              $pbProgressBarUniqueId = 'pb_progressBar_'.popb_next_element_uid();
 
               $pbProgressBarHTML = '
               <p style="font-size:'.$pbProgressBarTitleSize.'px; color:'.$pbProgressBarTitleColor.';line-height:0; font-family:'.$pbProgressBarTextFontFamily.',sans-serif;" >'.$pbProgressBarTitle.'</p>
@@ -2037,7 +2040,7 @@
                 $pricingHeader = '';
               }
               
-              $randomBtnClass = (rand(500,1000)*2)*rand(10,500);
+              $randomBtnClass = popb_next_element_uid();
               $btnText = $this_widget_pricing['pricingbtnText'];
               $btnLink = $this_widget_pricing['pricingbtnLink'];
               $btnAllignment = $this_widget_pricing['pricingbtnButtonAlignment'];
@@ -2207,7 +2210,7 @@
                 array_push($POPBallWidgetsScriptsArray, $btnIconHoverAnimationScript);
 
               if ($btnLink !== '') {
-                $randomBtnClass = (rand(500,1000)*2)*rand(10,500);
+                $randomBtnClass = popb_next_element_uid();
                 
                 $pricingButton = "<br>
                   <div class='wdt-$this_column_type' style='text-align:".$pricingbtnButtonAlignment."; padding:20px 0 40px 0; background:".$pbPricingButtonSectionBgColor.";'> $this_widget_btn </div>";
@@ -2257,7 +2260,7 @@
               
               $widgetOwlLoadScripts = true;
 
-              $pbImgCarouselUniqueId = 'pb_imgCarousel_'.(rand(500,1000)*2)*rand(10,500);
+              $pbImgCarouselUniqueId = 'pb_imgCarousel_'.popb_next_element_uid();
 
               echo "\n <div  id='$pbImgCarouselUniqueId' class='pbOwl-carousel'> \n";
 
@@ -2403,7 +2406,7 @@
                 $iconListTextSize = $this_widget_icon_list['iconListTextSize'];
                 $iconListTextIndent = $this_widget_icon_list['iconListTextIndent'];
                 $iconListTextColor = $this_widget_icon_list['iconListTextColor'];
-                $pbIconListUniqueId = 'pb_IconList_'.(rand(500,1000)*2)*rand(10,500);
+                $pbIconListUniqueId = 'pb_IconList_'.popb_next_element_uid();
 
                 if (isset($this_widget_icon_list['iconListItemLinkOpen'])) {
                   $iconListItemLinkOpen = $this_widget_icon_list['iconListItemLinkOpen'];

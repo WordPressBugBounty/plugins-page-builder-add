@@ -20,10 +20,10 @@
 
 				$plugOps_pageBuilder_settings_nonce = wp_create_nonce( 'POPB_settings_nonce' );
 			?>
-			<textarea id="TrackingScriptsField" class="TrackingScriptsField" name="TrackingScriptsField" style="width:600px; height: 300px;"><?php echo $ulpb_global_tracking_scripts; ?></textarea>
+			<textarea id="TrackingScriptsField" class="TrackingScriptsField" name="TrackingScriptsField" style="width:600px; height: 300px;"><?php echo esc_textarea( $ulpb_global_tracking_scripts ); ?></textarea>
 			<br><br>
 			<p>Scripts for Body Tag</p>
-			<textarea id="TrackingScriptsFieldBody" class="TrackingScriptsFieldBody" name="TrackingScriptsFieldBody" style="width:600px; height: 250px;"><?php echo $ulpb_global_tracking_scriptsBodyTag; ?></textarea>
+			<textarea id="TrackingScriptsFieldBody" class="TrackingScriptsFieldBody" name="TrackingScriptsFieldBody" style="width:600px; height: 250px;"><?php echo esc_textarea( $ulpb_global_tracking_scriptsBodyTag ); ?></textarea>
 			</div>
 			<br>
 			<br>

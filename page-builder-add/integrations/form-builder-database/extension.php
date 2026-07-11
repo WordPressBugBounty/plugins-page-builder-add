@@ -249,6 +249,10 @@ function popb_formBuilder_database_renderFormDataTable($postID){
                             if (row[j] instanceof Date) {
                                 innerValue = row[j].toLocaleString();
                             };
+                            // Prevent CSV/formula injection: neutralise cells that start with = + - @ (or tab/CR).
+                            if (/^[=+\-@\t\r]/.test(innerValue)) {
+                            	innerValue = "'" + innerValue;
+                            }
                             var result = innerValue.replace(/"/g, '""');
                             if (result.search(/("|,|\n)/g) >= 0)
                                 result = '"' + result + '"';

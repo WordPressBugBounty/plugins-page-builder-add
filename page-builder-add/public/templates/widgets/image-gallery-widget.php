@@ -7,7 +7,7 @@
   $widgetMasonryLoadScripts = true;
   $widgetJQueryLoadScripts = true;
 
-  $uniqueGallId = (rand(500,1000)*2)*rand(10,500);
+  $uniqueGallId = popb_next_element_uid();
   $gridScriptResponsive = '';
 
   $allGalleryitemsHTML = '';

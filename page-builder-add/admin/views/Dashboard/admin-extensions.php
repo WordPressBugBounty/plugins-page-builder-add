@@ -137,8 +137,8 @@
         </div>
         <div class="pb_ext-card">
           <div class="pb_extImg_container"> <img src="<?php echo ULPB_PLUGIN_URL.'/images/extension-icons/16.png' ?>"> </div>
-          <h3> <a href="https://pluginops.com/page-builder/?ref=extensionsPage"> SendInBlue Integration </a> </h3>
-          <p>SendInBlue Extension allows you to send your subscribe form and form builder submissions directly to your SendInBlue account.</p>
+          <h3> <a href="https://pluginops.com/page-builder/?ref=extensionsPage"> Brevo (formerly SendinBlue) Integration </a> </h3>
+          <p>Brevo (formerly SendinBlue) Extension allows you to send your subscribe form and form builder submissions directly to your Brevo account.</p>
           
           <?php echo $mailchimpExtLink; ?>
         </div>
